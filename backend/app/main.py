@@ -54,10 +54,12 @@ app.include_router(labels.router, prefix="/api/v3.1")
 
 frontend_build = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "frontend", "build")
 if os.path.isdir(frontend_build):
+    app.mount("/static", StaticFiles(directory=os.path.join(frontend_build, "static")), name="static")
+
     @app.middleware("http")
     async def serve_frontend(request, call_next):
         response = await call_next(request)
-        if response.status_code == 404 and not request.url.path.startswith("/api/"):
+        if response.status_code == 404 and not request.url.path.startswith("/api/") and not request.url.path.startswith("/static/"):
             return FileResponse(os.path.join(frontend_build, "index.html"))
         return response
 
