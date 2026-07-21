@@ -11,15 +11,12 @@ services:
       - key: PYTHON_VERSION
         value: 3.12.0
 
-  - type: web
+  - type: static
     name: windriver-frontend
     runtime: static
-    region: oregon
-    plan: free
     buildCommand: npm install && npm run build
-    startCommand: npx serve -s build -l $PORT
-    rootDir: frontend
     staticPublishPath: build
+    rootDir: frontend
     envVars:
       - key: REACT_APP_API_URL
         value: https://windriver-backend.onrender.com/api/v3.1
