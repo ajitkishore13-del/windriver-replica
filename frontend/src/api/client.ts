@@ -15,7 +15,7 @@ const AUTH_STORAGE_KEY = 'windriver_auth';
 export function setAuth(username: string, password: string) {
   const encoded = btoa(`${username}:${password}`);
   const authHeader = `Basic ${encoded}`;
-  localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({ username, password, authHeader }));
+  localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({ username, password }));
   api.defaults.headers.common['Authorization'] = authHeader;
 }
 
@@ -33,6 +33,11 @@ export function clearAuth() {
 }
 
 export function isAuthenticated(): boolean {
+  const auth = getAuth();
+  if (auth && !api.defaults.headers.common['Authorization']) {
+    const encoded = btoa(`${auth.username}:${auth.password}`);
+    api.defaults.headers.common['Authorization'] = `Basic ${encoded}`;
+  }
   return !!api.defaults.headers.common['Authorization'];
 }
 
