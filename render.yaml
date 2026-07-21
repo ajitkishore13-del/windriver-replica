@@ -1,22 +1,14 @@
 services:
   - type: web
-    name: windriver-backend
+    name: windriver-replica
     runtime: python
     region: oregon
     plan: free
-    buildCommand: pip install -r backend/requirements.txt
+    buildCommand: |
+      pip install -r backend/requirements.txt
+      cd frontend && npm install && npm run build
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
-    rootDir: backend
+    rootDir: .
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.0
-
-  - type: static
-    name: windriver-frontend
-    runtime: static
-    buildCommand: npm install && npm run build
-    staticPublishPath: build
-    rootDir: frontend
-    envVars:
-      - key: REACT_APP_API_URL
-        value: https://windriver-backend.onrender.com/api/v3.1

@@ -1,8 +1,11 @@
 import hashlib
 import datetime
 
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 from app.database import engine, SessionLocal, Base
 from app.models import User, Tenant, Blueprint, Deployment, Execution, Secret, Plugin, Site, Agent, Group, Event, Snapshot
@@ -48,6 +51,15 @@ app.include_router(events.router, prefix="/api/v3.1")
 app.include_router(snapshots.router, prefix="/api/v3.1")
 app.include_router(cluster.router, prefix="/api/v3.1")
 app.include_router(labels.router, prefix="/api/v3.1")
+
+frontend_build = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend", "build")
+if os.path.isdir(frontend_build):
+    @app.middleware("http")
+    async def serve_frontend(request, call_next):
+        response = await call_next(request)
+        if response.status_code == 404 and not request.url.path.startswith("/api/"):
+            return FileResponse(os.path.join(frontend_build, "index.html"))
+        return response
 
 
 def seed_data():
