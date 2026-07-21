@@ -16,7 +16,7 @@ export default function LoginPage() {
     setError('');
     setAuth(username, password);
     try {
-      await api.get('/status');
+      await api.post('/login');
       navigate('/dashboard');
     } catch {
       setError('Invalid credentials. Try admin/admin.');
