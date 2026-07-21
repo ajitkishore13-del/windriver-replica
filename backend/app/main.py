@@ -52,7 +52,7 @@ app.include_router(snapshots.router, prefix="/api/v3.1")
 app.include_router(cluster.router, prefix="/api/v3.1")
 app.include_router(labels.router, prefix="/api/v3.1")
 
-frontend_build = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend", "build")
+frontend_build = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "frontend", "build")
 if os.path.isdir(frontend_build):
     @app.middleware("http")
     async def serve_frontend(request, call_next):
